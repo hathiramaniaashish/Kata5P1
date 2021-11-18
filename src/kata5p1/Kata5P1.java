@@ -9,33 +9,18 @@ import java.sql.ResultSet;
 public class Kata5P1 {
 
     public static void main(String[] args) {
-        selectAll();
+        createNewTable();
     }
     
-    private static Connection connect() {
+    public static void createNewTable() {
         String URL = "jdbc:sqlite:Kata5.db";
-        Connection conn = null;
+        String SQL = "CREATE TABLE IF NOT EXISTS EMAIL "
+                   + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, MAIL TEXT NOT NULL)";
         try {
-            conn = DriverManager.getConnection(URL);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return conn;
-    }
-    
-    private static void selectAll() {
-        String SQL = "SELECT * FROM PEOPLE";
-        try {
-            Connection conn = connect();
+            Connection conn = DriverManager.getConnection(URL);
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(SQL);
-            
-            while (rs.next()) {
-                System.out.println(rs.getInt("ID") + ", " + 
-                                   rs.getString("NOMBRE") + ", " +
-                                   rs.getString("APELLIDOS") + ", " +
-                                   rs.getString("DEPARTAMENTO"));
-            }
+            stmt.execute(SQL);
+            System.out.println("Tabla creada.");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
