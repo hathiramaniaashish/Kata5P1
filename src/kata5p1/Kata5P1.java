@@ -3,24 +3,32 @@ package kata5p1;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.ResultSet;
+import java.sql.PreparedStatement;
+import java.util.List;
 
 public class Kata5P1 {
 
     public static void main(String[] args) {
-        createNewTable();
+        String fileName = "email.txt";
+        List<String> emails = MailListReader.read(fileName);
+        addEmailsDB(emails);
     }
     
-    public static void createNewTable() {
+    public static void addEmailsDB(List<String> emails) {
+        for (String email : emails) {
+            insert(email);
+        }
+    }
+    
+    public static void insert(String email) {
+        String SQL = "INSERT INTO EMAIL(MAIL) VALUES(?)";
         String URL = "jdbc:sqlite:Kata5.db";
-        String SQL = "CREATE TABLE IF NOT EXISTS EMAIL "
-                   + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, MAIL TEXT NOT NULL)";
+        
         try {
             Connection conn = DriverManager.getConnection(URL);
-            Statement stmt = conn.createStatement();
-            stmt.execute(SQL);
-            System.out.println("Tabla creada.");
+            PreparedStatement pstmt = conn.prepareStatement(SQL);
+            pstmt.setString(1, email);
+            pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
